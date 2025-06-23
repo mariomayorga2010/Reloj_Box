@@ -197,6 +197,14 @@
             width: 60px;
         }
         
+        #infoBtn {
+            background: linear-gradient(to right, #9b59b6, #8e44ad);
+            color: white;
+            padding: 16px;
+            min-width: auto;
+            width: 60px;
+        }
+        
         .cycle-counter {
             font-size: 1.3rem;
             margin-top: 20px;
@@ -209,31 +217,120 @@
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
         }
         
-        .instructions {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            text-align: left;
-            border: 1px solid rgba(255, 215, 0, 0.4);
+        .boxer {
+            position: absolute;
+            bottom: -30px;
+            right: -30px;
+            font-size: 8rem;
+            opacity: 0.1;
+            z-index: -1;
+            transform: rotate(20deg);
+        }
+        
+        .time-indicator {
+            font-size: 1.1rem;
+            margin-top: 10px;
+            color: #aaa;
+            font-style: italic;
+        }
+        
+        /* Estilo del modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: rgba(0, 0, 0, 0.9);
+            border: 3px solid #ffd700;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
             position: relative;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            animation: modalFadeIn 0.5s;
         }
         
-        .instructions h3 {
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
             color: #ffd700;
-            margin-bottom: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: #ff6b6b;
+            transform: scale(1.2);
+        }
+        
+        .modal h2 {
+            color: #ffd700;
             text-align: center;
-            font-size: 1.4rem;
+            margin-bottom: 20px;
+            font-size: 2.2rem;
         }
         
-        .instructions ul {
+        .modal h3 {
+            color: #ffd700;
+            margin: 20px 0 15px;
+            text-align: center;
+            font-size: 1.6rem;
+        }
+        
+        .modal ul {
             padding-left: 25px;
+            margin-bottom: 20px;
         }
         
-        .instructions li {
-            margin-bottom: 10px;
-            line-height: 1.5;
-            font-size: 1.05rem;
+        .modal li {
+            margin-bottom: 12px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+            color: #ddd;
+        }
+        
+        .modal li strong {
+            color: #ffd700;
+        }
+        
+        .modal-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: linear-gradient(to right, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .modal-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
         }
         
         .pulse {
@@ -272,23 +369,6 @@
             75% { transform: rotate(-15deg); }
         }
         
-        .boxer {
-            position: absolute;
-            bottom: -30px;
-            right: -30px;
-            font-size: 8rem;
-            opacity: 0.1;
-            z-index: -1;
-            transform: rotate(20deg);
-        }
-        
-        .time-indicator {
-            font-size: 1.1rem;
-            margin-top: 10px;
-            color: #aaa;
-            font-style: italic;
-        }
-        
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
@@ -309,7 +389,7 @@
                 min-width: 110px;
             }
             
-            #fullscreenBtn {
+            #fullscreenBtn, #infoBtn {
                 width: 55px;
                 padding: 14px;
             }
@@ -321,6 +401,18 @@
             
             .gloves-icon {
                 font-size: 3rem;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+            
+            .modal h2 {
+                font-size: 1.8rem;
+            }
+            
+            .modal h3 {
+                font-size: 1.4rem;
             }
         }
         
@@ -364,23 +456,46 @@
         :-ms-fullscreen {
             background: black;
         }
-        
-        /* Estado de pantalla completa */
-        .fullscreen-active {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: black;
-        }
     </style>
 </head>
 <body class="round-active">
+    <!-- Modal de instrucciones -->
+    <div id="instructionsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2><i class="fas fa-boxing-glove"></i> Instrucciones del Reloj de Boxeo</h2>
+            
+            <h3>¿Cómo funciona?</h3>
+            <ul>
+                <li>El temporizador inicia con un <strong>round de 2:30 minutos</strong> (fondo rojo)</li>
+                <li>Al finalizar el round, sonará una campana triple y comenzará el <strong>descanso de 0:30 segundos</strong> (fondo amarillo)</li>
+                <li>Al finalizar el descanso, sonará una campana y comenzará un nuevo round</li>
+                <li>Los últimos <strong>5 segundos</strong> de cada fase tendrás alerta visual (fondo verde)</li>
+                <li>El ciclo se repite indefinidamente hasta que lo detengas</li>
+            </ul>
+            
+            <h3>Controles</h3>
+            <ul>
+                <li><i class="fas fa-play"></i> <strong>Iniciar:</strong> Comienza el temporizador</li>
+                <li><i class="fas fa-pause"></i> <strong>Detener:</strong> Pausa el temporizador</li>
+                <li><i class="fas fa-redo"></i> <strong>Reiniciar:</strong> Vuelve al inicio</li>
+                <li><i class="fas fa-expand"></i> <strong>Pantalla completa:</strong> Modo inmersivo</li>
+                <li><i class="fas fa-info-circle"></i> <strong>Instrucciones:</strong> Muestra este panel</li>
+            </ul>
+            
+            <h3>Recomendaciones</h3>
+            <ul>
+                <li>Usa pantalla completa para una mejor experiencia</li>
+                <li>En móviles, la pantalla permanecerá activa durante el entrenamiento</li>
+                <li>Coloca el dispositivo en un lugar visible durante tu entrenamiento</li>
+            </ul>
+            
+            <button id="startTrainingBtn" class="modal-btn">
+                <i class="fas fa-boxing-glove"></i> Comenzar Entrenamiento
+            </button>
+        </div>
+    </div>
+
     <div class="container">
         <div class="boxer">🥊</div>
         
@@ -401,19 +516,7 @@
             <button id="stopBtn"><i class="fas fa-pause"></i> Detener</button>
             <button id="resetBtn"><i class="fas fa-redo"></i> Reiniciar</button>
             <button id="fullscreenBtn" title="Pantalla completa"><i class="fas fa-expand"></i></button>
-        </div>
-        
-        <div class="instructions">
-            <h3>Instrucciones <span class="bell-icon">🔔</span></h3>
-            <ul>
-                <li>El temporizador inicia con un <strong>round de 2:30 minutos</strong> (fondo rojo)</li>
-                <li>Al finalizar el round, sonará una campana triple y comenzará el <strong>descanso de 0:30 segundos</strong> (fondo amarillo)</li>
-                <li>Al finalizar el descanso, sonará una campana y comenzará un nuevo round</li>
-                <li>Los últimos 10 segundos de cada fase tendrás alerta visual (fondo verde)</li>
-                <li>El ciclo se repite indefinidamente hasta que lo detengas</li>
-                <li>Usa el botón <i class="fas fa-expand"></i> para pantalla completa</li>
-                <li>En móviles, la pantalla permanecerá activa durante el entrenamiento</li>
-            </ul>
+            <button id="infoBtn" title="Instrucciones"><i class="fas fa-info-circle"></i></button>
         </div>
     </div>
 
@@ -437,10 +540,13 @@
         const stopBtn = document.getElementById('stopBtn');
         const resetBtn = document.getElementById('resetBtn');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const infoBtn = document.getElementById('infoBtn');
         const body = document.body;
         const roundEndSound = document.getElementById('roundEndSound');
         const restEndSound = document.getElementById('restEndSound');
-        const container = document.querySelector('.container');
+        const modal = document.getElementById('instructionsModal');
+        const closeModal = document.querySelector('.close-modal');
+        const startTrainingBtn = document.getElementById('startTrainingBtn');
         
         // Variables de estado
         let totalSeconds;
@@ -450,6 +556,33 @@
         let cyclesCompleted = 0;
         let isFullscreen = false;
         let wakeLock = null;
+        
+        // Mostrar modal al cargar la página
+        window.onload = function() {
+            modal.style.display = 'flex';
+        };
+        
+        // Cerrar modal al hacer clic en la X
+        closeModal.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        // Cerrar modal y comenzar entrenamiento
+        startTrainingBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        // Abrir modal desde el botón de información
+        infoBtn.addEventListener('click', function() {
+            modal.style.display = 'flex';
+        });
+        
+        // Cerrar modal al hacer clic fuera del contenido
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
         
         // Inicializar el temporizador
         function initTimer() {
@@ -485,7 +618,7 @@
                 updateDisplay();
                 
                 // Cambiar a verde cuando quedan 5 segundos
-                if (totalSeconds <= 10 && totalSeconds > 0) {
+                if (totalSeconds <= 5 && totalSeconds > 0) {
                     body.classList.add('time-up');
                 } else {
                     body.classList.remove('time-up');
