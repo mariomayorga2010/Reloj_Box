@@ -4,12 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reloj de Boxeo Profesional</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            --round-red-1: #8b0000;
+            --round-red-2: #b22222;
+            --round-red-3: #dc143c;
+            --rest-yellow-1: #ff8c00;
+            --rest-yellow-2: #ffa500;
+            --rest-yellow-3: #ffd700;
+            --alert-green-1: #006400;
+            --alert-green-2: #008000;
+            --alert-green-3: #2e8b57;
         }
         
         body {
@@ -17,24 +31,25 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #8b0000, #b22222, #dc143c);
+            background: linear-gradient(135deg, var(--round-red-1), var(--round-red-2), var(--round-red-3));
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
             padding: 20px;
             transition: background 0.5s ease;
+            overflow: hidden;
         }
         
         /* Fondos para diferentes estados */
         body.round-active {
-            background: linear-gradient(135deg, #8b0000, #b22222, #dc143c);
+            background: linear-gradient(135deg, var(--round-red-1), var(--round-red-2), var(--round-red-3));
         }
         
         body.rest-active {
-            background: linear-gradient(135deg, #ffa500, #ff8c00, #ff4500);
+            background: linear-gradient(135deg, var(--rest-yellow-1), var(--rest-yellow-2), var(--rest-yellow-3));
         }
         
         body.time-up {
-            background: linear-gradient(135deg, #008000, #006400, #2e8b57);
+            background: linear-gradient(135deg, var(--alert-green-1), var(--alert-green-2), var(--alert-green-3));
         }
         
         @keyframes gradientBG {
@@ -54,11 +69,25 @@
             color: white;
             position: relative;
             border: 3px solid #ffd700;
+            z-index: 10;
+            backdrop-filter: blur(5px);
+        }
+        
+        .title-area {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .gloves-icon {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            animation: float 3s ease-in-out infinite;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
         }
         
         h1 {
             font-size: 2.5rem;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             color: #ffd700;
             text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
             letter-spacing: 1px;
@@ -66,45 +95,48 @@
         
         .subtitle {
             font-size: 1.2rem;
-            margin-bottom: 30px;
             color: #ccc;
+            margin-top: 5px;
         }
         
         .timer-display {
-            font-size: 5rem;
+            font-size: 5.5rem;
             font-weight: bold;
-            margin: 30px 0;
+            margin: 25px 0;
             color: white;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
             letter-spacing: 5px;
             transition: all 0.3s ease;
             background: rgba(0, 0, 0, 0.4);
             padding: 20px;
             border-radius: 15px;
-            border: 2px solid rgba(255, 215, 0, 0.5);
+            border: 2px solid rgba(255, 215, 0, 0.6);
+            font-family: 'Courier New', monospace;
         }
         
         .round-display {
-            font-size: 1.5rem;
+            font-size: 1.7rem;
             margin-bottom: 20px;
-            padding: 10px 20px;
+            padding: 12px 25px;
             border-radius: 30px;
             display: inline-block;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 2px;
+            transition: all 0.3s ease;
         }
         
         .round {
             background: linear-gradient(to right, #c0392b, #e74c3c);
             color: white;
-            box-shadow: 0 0 15px rgba(231, 76, 60, 0.7);
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.8);
         }
         
         .rest {
             background: linear-gradient(to right, #f39c12, #f1c40f);
             color: #2c3e50;
-            box-shadow: 0 0 15px rgba(243, 156, 18, 0.7);
+            font-weight: 800;
+            box-shadow: 0 0 20px rgba(243, 156, 18, 0.8);
         }
         
         .controls {
@@ -112,26 +144,30 @@
             justify-content: center;
             flex-wrap: wrap;
             gap: 15px;
-            margin: 20px 0;
+            margin: 25px 0;
         }
         
         button {
-            padding: 15px 30px;
+            padding: 16px 32px;
             font-size: 1.1rem;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s ease;
-            min-width: 120px;
+            min-width: 130px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         
         button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 7px 18px rgba(0, 0, 0, 0.5);
         }
         
         button:active {
@@ -156,46 +192,48 @@
         #fullscreenBtn {
             background: linear-gradient(to right, #3498db, #2980b9);
             color: white;
-            padding: 15px;
+            padding: 16px;
             min-width: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 60px;
         }
         
         .cycle-counter {
-            font-size: 1.2rem;
-            margin-top: 15px;
+            font-size: 1.3rem;
+            margin-top: 20px;
             color: #ffd700;
             font-weight: bold;
             background: rgba(0, 0, 0, 0.4);
-            padding: 8px 15px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 30px;
             display: inline-block;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
         }
         
         .instructions {
             margin-top: 30px;
-            padding: 15px;
+            padding: 20px;
             background-color: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             text-align: left;
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            position: relative;
         }
         
         .instructions h3 {
             color: #ffd700;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             text-align: center;
+            font-size: 1.4rem;
         }
         
         .instructions ul {
-            padding-left: 20px;
+            padding-left: 25px;
         }
         
         .instructions li {
-            margin-bottom: 8px;
-            line-height: 1.4;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            font-size: 1.05rem;
         }
         
         .pulse {
@@ -217,12 +255,6 @@
             50% { opacity: 0.7; }
         }
         
-        .gloves-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            animation: float 3s ease-in-out infinite;
-        }
-        
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
@@ -240,60 +272,161 @@
             75% { transform: rotate(-15deg); }
         }
         
+        .boxer {
+            position: absolute;
+            bottom: -30px;
+            right: -30px;
+            font-size: 8rem;
+            opacity: 0.1;
+            z-index: -1;
+            transform: rotate(20deg);
+        }
+        
+        .time-indicator {
+            font-size: 1.1rem;
+            margin-top: 10px;
+            color: #aaa;
+            font-style: italic;
+        }
+        
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
             }
             
             h1 {
-                font-size: 2rem;
+                font-size: 2.2rem;
+            }
+            
+            .timer-display {
+                font-size: 4.5rem;
+                padding: 15px;
+            }
+            
+            button {
+                padding: 14px 25px;
+                font-size: 1rem;
+                min-width: 110px;
+            }
+            
+            #fullscreenBtn {
+                width: 55px;
+                padding: 14px;
+            }
+            
+            .round-display {
+                font-size: 1.5rem;
+                padding: 10px 20px;
+            }
+            
+            .gloves-icon {
+                font-size: 3rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .controls {
+                gap: 12px;
+            }
+            
+            button {
+                padding: 13px 20px;
+                min-width: 100px;
+                font-size: 0.95rem;
             }
             
             .timer-display {
                 font-size: 4rem;
             }
             
-            button {
-                padding: 12px 20px;
-                font-size: 1rem;
-                min-width: 100px;
+            h1 {
+                font-size: 1.9rem;
             }
             
-            .controls {
-                flex-direction: column;
-                align-items: center;
+            .subtitle {
+                font-size: 1.1rem;
             }
+        }
+        
+        /* Solución para pantalla completa */
+        :fullscreen, ::backdrop {
+            background: black;
+        }
+        
+        :-webkit-full-screen {
+            background: black;
+        }
+        
+        :-moz-full-screen {
+            background: black;
+        }
+        
+        :-ms-fullscreen {
+            background: black;
+        }
+        
+        /* Estado de pantalla completa */
+        .fullscreen-active {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: black;
         }
     </style>
 </head>
 <body class="round-active">
     <div class="container">
-        <div class="gloves-icon">🥊</div>
-        <h1>RELOJ DE BOXEO</h1>
-        <p class="subtitle">Entrenamiento profesional - Round y Descanso</p>
+        <div class="boxer">🥊</div>
+        
+        <div class="title-area">
+            <div class="gloves-icon">🥊</div>
+            <h1>RELOJ DE BOXEO</h1>
+            <p class="subtitle">Entrenamiento profesional - Round y Descanso</p>
+        </div>
         
         <div id="roundDisplay" class="round-display round">ROUND ACTIVO</div>
         <div id="timer" class="timer-display">02:30</div>
+        <div class="time-indicator">(2 minutos 30 segundos)</div>
+        
         <div id="cycleCounter" class="cycle-counter">Ciclo completado: 0</div>
         
         <div class="controls">
-            <button id="startBtn">Iniciar</button>
-            <button id="stopBtn">Detener</button>
-            <button id="resetBtn">Reiniciar</button>
-            <button id="fullscreenBtn" title="Pantalla completa">⛶</button>
+            <button id="startBtn"><i class="fas fa-play"></i> Iniciar</button>
+            <button id="stopBtn"><i class="fas fa-pause"></i> Detener</button>
+            <button id="resetBtn"><i class="fas fa-redo"></i> Reiniciar</button>
+            <button id="fullscreenBtn" title="Pantalla completa"><i class="fas fa-expand"></i></button>
         </div>
         
         <div class="instructions">
             <h3>Instrucciones <span class="bell-icon">🔔</span></h3>
             <ul>
-                <li>El temporizador inicia con un <strong>round de 2 minutos 30 segundos</strong> (fondo rojo)</li>
-                <li>Al finalizar el round, sonará una campana triple y comenzará el <strong>descanso de 30 segundos</strong> (fondo amarillo)</li>
-                <li>Al finalizar el descanso, sonará una campana larga y comenzará un nuevo round</li>
+                <li>El temporizador inicia con un <strong>round de 2:30 minutos</strong> (fondo rojo)</li>
+                <li>Al finalizar el round, sonará una campana triple y comenzará el <strong>descanso de 0:30 segundos</strong> (fondo amarillo)</li>
+                <li>Al finalizar el descanso, sonará una campana y comenzará un nuevo round</li>
+                <li>Los últimos 10 segundos de cada fase tendrás alerta visual (fondo verde)</li>
                 <li>El ciclo se repite indefinidamente hasta que lo detengas</li>
-                <li>Usa el botón ⛶ para pantalla completa</li>
+                <li>Usa el botón <i class="fas fa-expand"></i> para pantalla completa</li>
+                <li>En móviles, la pantalla permanecerá activa durante el entrenamiento</li>
             </ul>
         </div>
     </div>
+
+    <!-- Elementos de audio para los sonidos -->
+    <audio id="roundEndSound" preload="auto">
+        <source src="round-end.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+    
+    <audio id="restEndSound" preload="auto">
+        <source src="round-end.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
 
     <script>
         // Elementos del DOM
@@ -305,6 +438,9 @@
         const resetBtn = document.getElementById('resetBtn');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
         const body = document.body;
+        const roundEndSound = document.getElementById('roundEndSound');
+        const restEndSound = document.getElementById('restEndSound');
+        const container = document.querySelector('.container');
         
         // Variables de estado
         let totalSeconds;
@@ -312,6 +448,8 @@
         let isRunning = false;
         let isRestPeriod = false;
         let cyclesCompleted = 0;
+        let isFullscreen = false;
+        let wakeLock = null;
         
         // Inicializar el temporizador
         function initTimer() {
@@ -321,6 +459,7 @@
             updateDisplay();
             roundDisplay.textContent = 'ROUND ACTIVO';
             roundDisplay.className = 'round-display round';
+            document.querySelector('.time-indicator').textContent = '(2 minutos 30 segundos)';
         }
         
         // Actualizar la visualización del tiempo
@@ -335,15 +474,18 @@
             if (isRunning) return;
             
             isRunning = true;
-            startBtn.textContent = 'Continuar';
+            startBtn.innerHTML = '<i class="fas fa-play"></i> Continuar';
             timerDisplay.classList.add('pulse');
+            
+            // Activar wake lock para mantener pantalla encendida
+            activateWakeLock();
             
             timerInterval = setInterval(() => {
                 totalSeconds--;
                 updateDisplay();
                 
                 // Cambiar a verde cuando quedan 5 segundos
-                if (totalSeconds <= 5 && totalSeconds > 0) {
+                if (totalSeconds <= 10 && totalSeconds > 0) {
                     body.classList.add('time-up');
                 } else {
                     body.classList.remove('time-up');
@@ -360,7 +502,12 @@
                         playRestEndAlarm();
                         cyclesCompleted++;
                         cycleCounter.textContent = `Ciclo completado: ${cyclesCompleted}`;
-                        initTimer();
+                        
+                        // Iniciar nuevo round automáticamente
+                        setTimeout(() => {
+                            initTimer();
+                            startTimer();
+                        }, 1000);
                     } else {
                         playRoundEndAlarm();
                         startRestPeriod();
@@ -377,6 +524,7 @@
             updateDisplay();
             roundDisplay.textContent = 'DESCANSO';
             roundDisplay.className = 'round-display rest';
+            document.querySelector('.time-indicator').textContent = '(30 segundos)';
             
             // Iniciar automáticamente el descanso
             startTimer();
@@ -390,6 +538,10 @@
             isRunning = false;
             timerDisplay.classList.remove('pulse');
             body.classList.remove('time-up');
+            startBtn.innerHTML = '<i class="fas fa-play"></i> Continuar';
+            
+            // Liberar wake lock
+            releaseWakeLock();
         }
         
         // Reiniciar el temporizador
@@ -401,82 +553,111 @@
             timerDisplay.classList.remove('pulse');
             body.classList.remove('time-up');
             initTimer();
-            startBtn.textContent = 'Iniciar';
+            startBtn.innerHTML = '<i class="fas fa-play"></i> Iniciar';
+            
+            // Liberar wake lock
+            releaseWakeLock();
         }
         
         // Reproducir alarma de fin de round (campana triple)
         function playRoundEndAlarm() {
-            const context = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = context.createOscillator();
-            const gainNode = context.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(context.destination);
-            
-            // Campana triple
-            oscillator.type = 'sine';
-            oscillator.frequency.value = 880; // La5
-            gainNode.gain.value = 0.5;
-            
-            oscillator.start();
-            
-            // Tres campanadas
-            setTimeout(() => {
-                gainNode.gain.setValueAtTime(0.5, context.currentTime);
+            // Reproducir sonido triple
+            try {
+                roundEndSound.currentTime = 0;
+                roundEndSound.play();
+                
+                // Repetir para efecto triple
                 setTimeout(() => {
-                    gainNode.gain.setValueAtTime(0, context.currentTime);
-                    setTimeout(() => {
-                        gainNode.gain.setValueAtTime(0.5, context.currentTime);
-                        setTimeout(() => {
-                            gainNode.gain.setValueAtTime(0, context.currentTime);
-                            setTimeout(() => {
-                                gainNode.gain.setValueAtTime(0.5, context.currentTime);
-                                setTimeout(() => {
-                                    oscillator.stop();
-                                    setTimeout(() => context.close(), 100);
-                                }, 200);
-                            }, 200);
-                        }, 200);
-                    }, 200);
-                }, 200);
-            }, 100);
+                    roundEndSound.currentTime = 0;
+                    roundEndSound.play();
+                }, 500);
+                
+                setTimeout(() => {
+                    roundEndSound.currentTime = 0;
+                    roundEndSound.play();
+                }, 1000);
+            } catch (e) {
+                console.error("Error al reproducir sonido:", e);
+            }
+            
+            // Efecto visual
+            document.body.classList.add('flash');
+            setTimeout(() => document.body.classList.remove('flash'), 1500);
         }
         
-        // Reproducir alarma de fin de descanso (campana larga)
+        // Reproducir alarma de fin de descanso (campana única)
         function playRestEndAlarm() {
-            const context = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = context.createOscillator();
-            const gainNode = context.createGain();
+            // Reproducir sonido una sola vez
+            try {
+                restEndSound.currentTime = 0;
+                restEndSound.play();
+            } catch (e) {
+                console.error("Error al reproducir sonido:", e);
+            }
             
-            oscillator.connect(gainNode);
-            gainNode.connect(context.destination);
-            
-            // Campana larga
-            oscillator.type = 'sine';
-            oscillator.frequency.value = 440; // La4
-            gainNode.gain.value = 0.5;
-            
-            oscillator.start();
-            
-            // Campana sostenida
-            setTimeout(() => {
-                oscillator.stop();
-                setTimeout(() => context.close(), 100);
-            }, 1000);
+            // Efecto visual
+            document.body.classList.add('flash');
+            setTimeout(() => document.body.classList.remove('flash'), 1500);
         }
         
-        // Pantalla completa
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.error(`Error al intentar entrar en modo pantalla completa: ${err.message}`);
+        // Activar Wake Lock para mantener pantalla encendida
+        async function activateWakeLock() {
+            if ('wakeLock' in navigator) {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('Wake Lock activado');
+                    
+                    // Volver a activar cuando la visibilidad cambie
+                    document.addEventListener('visibilitychange', async () => {
+                        if (document.visibilityState === 'visible' && wakeLock !== null && wakeLock.released) {
+                            wakeLock = await navigator.wakeLock.request('screen');
+                        }
+                    });
+                } catch (err) {
+                    console.error(`${err.name}, ${err.message}`);
+                }
+            }
+        }
+        
+        // Liberar Wake Lock
+        function releaseWakeLock() {
+            if (wakeLock !== null) {
+                wakeLock.release().then(() => {
+                    wakeLock = null;
+                    console.log('Wake Lock liberado');
                 });
-                fullscreenBtn.textContent = '⛶';
+            }
+        }
+        
+        // Pantalla completa (solución universal)
+        function toggleFullscreen() {
+            const elem = document.documentElement;
+            
+            if (!isFullscreen) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) { /* Safari */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { /* IE11 */
+                    elem.msRequestFullscreen();
+                }
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                isFullscreen = true;
+                
+                // Activar wake lock si el temporizador está corriendo
+                if (isRunning) {
+                    activateWakeLock();
+                }
             } else {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
-                    fullscreenBtn.textContent = '⛶';
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE11 */
+                    document.msExitFullscreen();
                 }
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                isFullscreen = false;
             }
         }
         
@@ -486,15 +667,35 @@
         resetBtn.addEventListener('click', resetTimer);
         fullscreenBtn.addEventListener('click', toggleFullscreen);
         
-        // Salir de pantalla completa con tecla ESC
-        document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement) {
-                fullscreenBtn.textContent = '⛶';
+        // Detectar cambios en pantalla completa
+        document.addEventListener('fullscreenchange', exitHandler);
+        document.addEventListener('webkitfullscreenchange', exitHandler);
+        document.addEventListener('mozfullscreenchange', exitHandler);
+        document.addEventListener('MSFullscreenChange', exitHandler);
+        
+        function exitHandler() {
+            if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                isFullscreen = false;
             }
-        });
+        }
         
         // Inicializar
         initTimer();
+        
+        // Solución para iOS: prevenir comportamiento de zoom
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+        
+        // Mantener pantalla activa al iniciar si está en pantalla completa
+        window.addEventListener('load', () => {
+            if (document.fullscreenElement || document.webkitFullscreenElement || 
+                document.mozFullScreenElement || document.msFullscreenElement) {
+                isFullscreen = true;
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+            }
+        });
     </script>
 </body>
 </html>
