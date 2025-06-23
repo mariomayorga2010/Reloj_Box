@@ -333,6 +333,63 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
         }
         
+        /* Modal de activación de audio para Safari */
+        .audio-activation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .audio-activation-content {
+            background-color: rgba(0, 0, 0, 0.95);
+            border: 3px solid #ffd700;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.7);
+        }
+        
+        .audio-activation-content h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .audio-activation-content p {
+            color: #ddd;
+            margin-bottom: 25px;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+        
+        .audio-activation-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: linear-gradient(to right, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        
+        .audio-activation-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+        
         .pulse {
             animation: pulse 1s infinite;
         }
@@ -459,6 +516,18 @@
     </style>
 </head>
 <body class="round-active">
+    <!-- Modal de activación de audio para Safari -->
+    <div id="audioActivationModal" class="audio-activation-modal">
+        <div class="audio-activation-content">
+            <h2><i class="fas fa-volume-up"></i> Activación de Sonido Requerida</h2>
+            <p>Safari requiere que actives los sonidos manualmente para poder reproducirlos.</p>
+            <p>Por favor, haz clic en el botón de abajo para habilitar los sonidos del reloj.</p>
+            <button id="activateAudioBtn" class="audio-activation-btn">
+                <i class="fas fa-check-circle"></i> Activar Sonidos
+            </button>
+        </div>
+    </div>
+
     <!-- Modal de instrucciones -->
     <div id="instructionsModal" class="modal">
         <div class="modal-content">
@@ -544,9 +613,11 @@
         const body = document.body;
         const roundEndSound = document.getElementById('roundEndSound');
         const restEndSound = document.getElementById('restEndSound');
-        const modal = document.getElementById('instructionsModal');
+        const instructionsModal = document.getElementById('instructionsModal');
         const closeModal = document.querySelector('.close-modal');
         const startTrainingBtn = document.getElementById('startTrainingBtn');
+        const audioActivationModal = document.getElementById('audioActivationModal');
+        const activateAudioBtn = document.getElementById('activateAudioBtn');
         
         // Variables de estado
         let totalSeconds;
@@ -556,31 +627,73 @@
         let cyclesCompleted = 0;
         let isFullscreen = false;
         let wakeLock = null;
+        let audioEnabled = false;
         
-        // Mostrar modal al cargar la página
+        // Detectar si es Safari en iOS
+        const isSafariIOS = /iP(ad|od|hone)/i.test(navigator.userAgent) && 
+                            /WebKit/i.test(navigator.userAgent) && 
+                            !/CriOS/i.test(navigator.userAgent);
+        
+        // Mostrar modales apropiados al cargar
         window.onload = function() {
-            modal.style.display = 'flex';
+            if (isSafariIOS) {
+                // Mostrar modal de activación de audio para Safari iOS
+                audioActivationModal.style.display = 'flex';
+            } else {
+                // Para otros navegadores, mostrar instrucciones directamente
+                instructionsModal.style.display = 'flex';
+                audioEnabled = true; // Habilitar audio para otros navegadores
+            }
         };
         
-        // Cerrar modal al hacer clic en la X
+        // Activar audio para Safari iOS
+        activateAudioBtn.addEventListener('click', function() {
+            // Intentar reproducir un sonido de prueba para desbloquear audio
+            const testSound = new Audio();
+            testSound.src = 'round-end.mp3';
+            testSound.volume = 0.1;
+            
+            testSound.play().then(() => {
+                // Pausar inmediatamente después de iniciar
+                testSound.pause();
+                testSound.currentTime = 0;
+                
+                // Marcar audio como habilitado
+                audioEnabled = true;
+                
+                // Ocultar modal de activación de audio
+                audioActivationModal.style.display = 'none';
+                
+                // Mostrar modal de instrucciones
+                instructionsModal.style.display = 'flex';
+            }).catch(error => {
+                console.error('Error al habilitar audio:', error);
+                alert('Error al habilitar audio. Asegúrate de no estar en modo silencio.');
+            });
+        });
+        
+        // Cerrar modal de instrucciones
         closeModal.addEventListener('click', function() {
-            modal.style.display = 'none';
+            instructionsModal.style.display = 'none';
         });
         
-        // Cerrar modal y comenzar entrenamiento
+        // Comenzar entrenamiento
         startTrainingBtn.addEventListener('click', function() {
-            modal.style.display = 'none';
+            instructionsModal.style.display = 'none';
         });
         
-        // Abrir modal desde el botón de información
+        // Abrir instrucciones desde el botón de información
         infoBtn.addEventListener('click', function() {
-            modal.style.display = 'flex';
+            instructionsModal.style.display = 'flex';
         });
         
-        // Cerrar modal al hacer clic fuera del contenido
+        // Cerrar modales al hacer clic fuera del contenido
         window.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                modal.style.display = 'none';
+            if (event.target === instructionsModal) {
+                instructionsModal.style.display = 'none';
+            }
+            if (event.target === audioActivationModal) {
+                audioActivationModal.style.display = 'none';
             }
         });
         
@@ -618,7 +731,7 @@
                 updateDisplay();
                 
                 // Cambiar a verde cuando quedan 5 segundos
-                if (totalSeconds <= 10 && totalSeconds > 0) {
+                if (totalSeconds <= 5 && totalSeconds > 0) {
                     body.classList.add('time-up');
                 } else {
                     body.classList.remove('time-up');
@@ -694,6 +807,8 @@
         
         // Reproducir alarma de fin de round (campana triple)
         function playRoundEndAlarm() {
+            if (!audioEnabled) return;
+            
             // Reproducir sonido triple
             try {
                 roundEndSound.currentTime = 0;
@@ -720,6 +835,8 @@
         
         // Reproducir alarma de fin de descanso (campana única)
         function playRestEndAlarm() {
+            if (!audioEnabled) return;
+            
             // Reproducir sonido una sola vez
             try {
                 restEndSound.currentTime = 0;
